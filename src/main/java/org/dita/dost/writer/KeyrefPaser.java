@@ -184,10 +184,10 @@ public final class KeyrefPaser extends AbstractXMLFilter {
         elemNames = new ArrayDeque<>();
         keyRefElemNames = new ArrayDeque<>();
         hasSubElem = new ArrayDeque<>();
-    public String getCurrentElemId() {
-        return String.join(".", elemNames);
     }
 
+    private String getCurrentElemId() {
+        return String.join(".", elemNames);
     }
     
     public void setKeyDefinition(final KeyScope definitionMap) {
