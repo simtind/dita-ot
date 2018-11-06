@@ -30,6 +30,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 
+import org.dita.dost.reader.KeyrefReader;
 import org.apache.xml.resolver.tools.CatalogResolver;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.dita.dost.util.Job;
@@ -203,6 +204,8 @@ public class KeyrefPaserTest {
     }
 
     private static KeyScope readKeyMap(final Path map) throws Exception {
+
+        KeyrefReader reader = new KeyrefReader();
         final URI keyMapFile = srcDir.toPath().resolve(map).toUri();
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final InputSource inputSource = new InputSource(keyMapFile.toString());
@@ -210,19 +213,9 @@ public class KeyrefPaserTest {
         documentBuilder.setEntityResolver(resolver);
         final Document document = documentBuilder.parse(inputSource);
 
-        final Map<String, Element> keys = new HashMap<String, Element>();
-        final NodeList keydefs = document.getElementsByTagName("keydef");
-        final Map<String, KeyDef> keymap = new HashMap<>();
-        for (int i = 0; i < keydefs.getLength(); i++) {
-            final Element elem = (Element) keydefs.item(i);
-            final Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-            doc.appendChild(doc.importNode(elem, true));
-            keys.put(elem.getAttribute("keys"), elem);
-            final KeyDef keyDef = new KeyDef(elem.getAttribute("keys"), new URI(elem.getAttribute("href")),
-                    null, null, tempDir.toPath().resolve(map).toUri(), elem);
-            keymap.put(keyDef.keys, keyDef);
-        }
-        return new KeyScope(keymap);
+        reader.read(keyMapFile, document);
+
+        return reader.getKeyDefinition();
     }
     
 }
