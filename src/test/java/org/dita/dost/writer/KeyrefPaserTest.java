@@ -67,8 +67,10 @@ public class KeyrefPaserTest {
         tempDirSubDir.mkdirs();
         TestUtils.normalize(new File(srcDir, "a.xml"), new File(tempDir, "a.xml"));
         TestUtils.normalize(new File(srcDir, "b.ditamap"), new File(tempDir, "b.ditamap"));
+        TestUtils.normalize(new File(srcDir, "d.ditamap"), new File(tempDir, "d.ditamap"));
         TestUtils.normalize(new File(srcDir, "subdir" + File.separator + "c.ditamap"), new File(tempDir, "subdir" + File.separator + "c.ditamap"));
         TestUtils.normalize(new File(srcDir, "id.xml"), new File(tempDir, "id.xml"));
+        TestUtils.normalize(new File(srcDir, "keys.ditamap"), new File(tempDir, "keys.ditamap"));
         TestUtils.normalize(new File(srcDir, "fallback.xml"), new File(tempDir, "fallback.xml"));
         resolver = CatalogUtils.getCatalogResolver();
 
@@ -151,13 +153,13 @@ public class KeyrefPaserTest {
     public void testMapWithKeyScopes() throws Exception {
         final KeyrefPaser parser = new KeyrefPaser();
         parser.setLogger(new TestUtils.TestLogger());
-        parser.setJob(new Job(srcDir));
+        parser.setJob(new Job(tempDir));
         parser.setKeyDefinition(keyDefinition);
-        parser.setCurrentFile(new File(srcDir, "d.ditamap").toURI());
-        parser.write(new File(srcDir, "d.ditamap"));
+        parser.setCurrentFile(new File(tempDir, "d.ditamap").toURI());
+        parser.write(new File(tempDir, "d.ditamap"));
 
         assertXMLEqual(new InputSource(new File(expDir, "d.ditamap").toURI().toString()),
-                new InputSource(new File(srcDir, "d.ditamap").toURI().toString()));
+                new InputSource(new File(tempDir, "d.ditamap").toURI().toString()));
     }
 
     @Test
@@ -206,7 +208,7 @@ public class KeyrefPaserTest {
     private static KeyScope readKeyMap(final Path map) throws Exception {
 
         KeyrefReader reader = new KeyrefReader();
-        final URI keyMapFile = srcDir.toPath().resolve(map).toUri();
+        final URI keyMapFile = tempDir.toPath().resolve(map).toUri();
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final InputSource inputSource = new InputSource(keyMapFile.toString());
         final DocumentBuilder documentBuilder = factory.newDocumentBuilder();
